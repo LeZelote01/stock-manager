@@ -335,6 +335,20 @@ class StockManagementAPITester:
         """Test stock alerts"""
         print("\n=== Testing Stock Alerts ===")
         
+        # First, ensure we have materials
+        if not self.created_ids["materials"]:
+            self.test_materials_crud()
+            
+        # Create a material with low quantity to test alerts
+        material_name = f"Low Stock Material {uuid.uuid4().hex[:8]}"
+        success, created_material = self.run_test(
+            "Create Low Stock Material",
+            "POST",
+            "materials",
+            200,
+            data={"nom": material_name, "quantite": 3}
+        )
+        
         success, alerts = self.run_test(
             "Get Stock Alerts",
             "GET",
