@@ -13,6 +13,7 @@ class StockManagementAPITester:
     def __init__(self, base_url="https://69536b33-4600-4b5f-b199-1ee029333aca.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
+        self.ws_url = f"{base_url.replace('https://', 'wss://')}/ws"
         self.token = None
         self.tests_run = 0
         self.tests_passed = 0
@@ -20,8 +21,11 @@ class StockManagementAPITester:
             "materials": [],
             "agents": [],
             "superviseurs": [],
-            "chef_section": []
+            "chef_section": [],
+            "fournisseurs": []
         }
+        self.ws_notifications = []
+        self.ws_connected = False
 
     def run_test(self, name, method, endpoint, expected_status, data=None, params=None):
         """Run a single API test"""
