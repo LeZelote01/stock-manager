@@ -140,6 +140,9 @@ const HomePage = () => {
       setMaterials(materialsRes.data);
       setDemandes(demandesRes.data.slice(0, 10)); // Last 10 requests
       setStockAlerts(alertsRes.data);
+      
+      console.log('Materials loaded:', materialsRes.data);
+      console.log('Stock alerts loaded:', alertsRes.data);
     } catch (error) {
       console.error('Erreur lors du chargement des données:', error);
     }
