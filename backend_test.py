@@ -66,6 +66,55 @@ class StockManagementAPITester:
         except Exception as e:
             print(f"❌ Failed - Error: {str(e)}")
             return False, {}
+            
+    def connect_websocket(self):
+        """Connect to WebSocket for real-time notifications"""
+        def on_message(ws, message):
+            print(f"WebSocket message received: {message}")
+            try:
+                data = json.loads(message)
+                self.ws_notifications.append(data)
+            except:
+                print(f"Failed to parse WebSocket message: {message}")
+                
+        def on_error(ws, error):
+            print(f"WebSocket error: {error}")
+            
+        def on_close(ws, close_status_code, close_msg):
+            print(f"WebSocket connection closed: {close_status_code} - {close_msg}")
+            self.ws_connected = False
+            
+        def on_open(ws):
+            print("WebSocket connection established")
+            self.ws_connected = True
+            
+        def run_websocket():
+            ws = websocket.WebSocketApp(
+                self.ws_url,
+                on_open=on_open,
+                on_message=on_message,
+                on_error=on_error,
+                on_close=on_close
+            )
+            ws.run_forever()
+            
+        print(f"\n🔌 Connecting to WebSocket at {self.ws_url}...")
+        self.ws_thread = threading.Thread(target=run_websocket)
+        self.ws_thread.daemon = True
+        self.ws_thread.start()
+        
+        # Wait for connection to establish
+        timeout = 5
+        start_time = time.time()
+        while not self.ws_connected and time.time() - start_time < timeout:
+            time.sleep(0.1)
+            
+        if self.ws_connected:
+            print("✅ WebSocket connected successfully")
+            return True
+        else:
+            print("❌ WebSocket connection failed")
+            return False
 
     def test_login(self, password="admin123"):
         """Test admin login"""
