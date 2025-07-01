@@ -301,8 +301,10 @@ async def get_stock_alerts():
         elif material["quantite"] <= 15:
             level = "bas"
         
+        # Convert to Material model to ensure proper serialization
+        material_obj = Material(**material)
         alerts.append({
-            "material": material,
+            "material": material_obj.dict(),
             "level": level
         })
     return alerts
