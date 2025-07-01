@@ -987,15 +987,40 @@ def main():
         print("❌ Login failed, stopping tests")
         return 1
 
-    # Test all CRUD operations
+    # Test all CRUD operations for base entities
     tester.test_materials_crud()
     tester.test_agents_crud()
     tester.test_superviseurs_crud()
     tester.test_chef_section_crud()
     
+    # Test new entity: Fournisseurs
+    tester.test_fournisseurs_crud()
+    
     # Test demandes and stock alerts
     tester.test_demandes()
     tester.test_stock_alerts()
+    
+    # Test new features: Analytics
+    tester.test_analytics_dashboard()
+    tester.test_analytics_trends()
+    
+    # Test new features: AI Predictions
+    tester.test_ai_predictions()
+    
+    # Test new features: Export Multi-format
+    tester.test_export_multi_format()
+    
+    # Test new features: QR Code Generation
+    tester.test_qr_code_generation()
+    
+    # Test new features: Auto-validation
+    tester.test_auto_validation()
+    
+    # Test new features: Historique (Audit Trail)
+    tester.test_historique()
+    
+    # Test new features: WebSocket Notifications
+    tester.test_websocket_notifications()
 
     # Print results
     print(f"\n📊 Tests passed: {tester.tests_passed}/{tester.tests_run}")
