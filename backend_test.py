@@ -275,9 +275,26 @@ class StockManagementAPITester:
         if not self.created_ids["materials"]:
             self.test_materials_crud()
         
-        if len(self.created_ids["agents"]) < 2:
-            self.test_agents_crud()
-            self.test_agents_crud()
+        # Create two agents specifically for this test to ensure they exist
+        agent_name1 = f"Test Agent {uuid.uuid4().hex[:8]}"
+        agent_matricule1 = f"A{uuid.uuid4().hex[:6]}"
+        success1, created_agent1 = self.run_test(
+            "Create Agent 1 for Demande",
+            "POST",
+            "agents",
+            200,
+            data={"nom": agent_name1, "matricule": agent_matricule1}
+        )
+        
+        agent_name2 = f"Test Agent {uuid.uuid4().hex[:8]}"
+        agent_matricule2 = f"A{uuid.uuid4().hex[:6]}"
+        success2, created_agent2 = self.run_test(
+            "Create Agent 2 for Demande",
+            "POST",
+            "agents",
+            200,
+            data={"nom": agent_name2, "matricule": agent_matricule2}
+        )
         
         if not self.created_ids["superviseurs"]:
             self.test_superviseurs_crud()
@@ -290,27 +307,29 @@ class StockManagementAPITester:
             200
         )
         
-        # CREATE a demande
-        material_id = self.created_ids["materials"][0]
-        superviseur_id = self.created_ids["superviseurs"][0]
-        agent1_id = self.created_ids["agents"][0]
-        agent2_id = self.created_ids["agents"][1]
-        
-        success, created_demande = self.run_test(
-            "Create Demande",
-            "POST",
-            "demandes",
-            200,
-            data={
-                "superviseur_id": superviseur_id,
-                "agent1_id": agent1_id,
-                "agent2_id": agent2_id,
-                "materiels_demandes": {material_id: 5},
-                "signature": "Test Signature"
-            }
-        )
-        
-        return success
+        if success1 and success2 and 'id' in created_agent1 and 'id' in created_agent2:
+            # CREATE a demande
+            material_id = self.created_ids["materials"][0]
+            superviseur_id = self.created_ids["superviseurs"][0]
+            agent1_id = created_agent1['id']
+            agent2_id = created_agent2['id']
+            
+            success, created_demande = self.run_test(
+                "Create Demande",
+                "POST",
+                "demandes",
+                200,
+                data={
+                    "superviseur_id": superviseur_id,
+                    "agent1_id": agent1_id,
+                    "agent2_id": agent2_id,
+                    "materiels_demandes": {material_id: 5},
+                    "signature": "Test Signature"
+                }
+            )
+            
+            return success
+        return False
 
     def test_stock_alerts(self):
         """Test stock alerts"""
