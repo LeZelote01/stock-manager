@@ -339,16 +339,35 @@ class StockManagementAPITester:
         if not self.created_ids["materials"]:
             self.test_materials_crud()
             
-        # Create a material with low quantity to test alerts
-        material_name = f"Low Stock Material {uuid.uuid4().hex[:8]}"
-        success, created_material = self.run_test(
+        # Create materials with different quantities to test all alert levels
+        material_critical = f"Critical Stock Material {uuid.uuid4().hex[:8]}"
+        success_critical, created_critical = self.run_test(
+            "Create Critical Stock Material",
+            "POST",
+            "materials",
+            200,
+            data={"nom": material_critical, "quantite": 3}
+        )
+        
+        material_low = f"Low Stock Material {uuid.uuid4().hex[:8]}"
+        success_low, created_low = self.run_test(
             "Create Low Stock Material",
             "POST",
             "materials",
             200,
-            data={"nom": material_name, "quantite": 3}
+            data={"nom": material_low, "quantite": 10}
         )
         
+        material_normal = f"Normal Stock Material {uuid.uuid4().hex[:8]}"
+        success_normal, created_normal = self.run_test(
+            "Create Normal Stock Material",
+            "POST",
+            "materials",
+            200,
+            data={"nom": material_normal, "quantite": 30}
+        )
+        
+        # Test the stock-alerts endpoint
         success, alerts = self.run_test(
             "Get Stock Alerts",
             "GET",
@@ -356,7 +375,38 @@ class StockManagementAPITester:
             200
         )
         
-        return success
+        if success:
+            print("Stock alerts response received successfully")
+            
+            # Verify the response structure and alert levels
+            if not alerts:
+                print("❌ No alerts returned")
+                return False
+                
+            # Check if we have alerts with different levels
+            alert_levels = set(alert["level"] for alert in alerts)
+            print(f"Alert levels found: {', '.join(alert_levels)}")
+            
+            # Verify that each material has the correct alert level
+            for alert in alerts:
+                material = alert["material"]
+                level = alert["level"]
+                
+                if material["quantite"] <= 5:
+                    expected_level = "critique"
+                elif material["quantite"] <= 15:
+                    expected_level = "bas"
+                else:
+                    expected_level = "normal"
+                    
+                if level != expected_level:
+                    print(f"❌ Material '{material['nom']}' with quantity {material['quantite']} has incorrect alert level: {level}, expected: {expected_level}")
+                    return False
+                    
+            print("✅ All stock alerts have correct levels")
+            return True
+        
+        return False
 
 def main():
     # Setup
