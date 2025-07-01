@@ -14,6 +14,7 @@ class StockManagementAPITester:
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.ws_url = f"{base_url.replace('https://', 'wss://')}/ws"
+        print(f"Using API URL: {self.api_url}")
         self.token = None
         self.tests_run = 0
         self.tests_passed = 0
