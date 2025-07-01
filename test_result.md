@@ -138,67 +138,100 @@ user_problem_statement: |
 
 backend:
   - task: "Analytics Dashboard Backend"
-    implemented: false
-    working: "NA"
+    implemented: true
+    working: false
     file: "server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
-    status_history: []
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "API returns 500 Internal Server Error. Issue with MongoDB ObjectId serialization in the response."
 
   - task: "Export Multi-format APIs"
-    implemented: false
-    working: "NA"
+    implemented: true
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
-    status_history: []
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "All export formats (CSV, Excel, PDF, PNG) are working correctly."
 
   - task: "Real-time Notifications"
-    implemented: false
-    working: "NA"
+    implemented: true
+    working: false
     file: "server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "medium"
     needs_retesting: false
-    status_history: []
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "WebSocket connection fails with 403 Forbidden error. CORS or authentication issue."
 
   - task: "Auto-validation System"
-    implemented: false
-    working: "NA"
+    implemented: true
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
-    status_history: []
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Demandes are automatically approved with status='approuve'. Stock quantities are updated correctly."
 
   - task: "AI Stock Predictions"
-    implemented: false
-    working: "NA"
+    implemented: true
+    working: false
     file: "server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "medium"
     needs_retesting: false
-    status_history: []
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "API returns 404 Not Found for material. Need to ensure material exists before testing."
 
   - task: "QR Code Generation"
-    implemented: false
-    working: "NA"
+    implemented: true
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "medium"
     needs_retesting: false
-    status_history: []
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "QR codes are generated correctly in base64 format and can be scanned via the API."
 
   - task: "Suppliers Management"
-    implemented: false
-    working: "NA"
+    implemented: true
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "low"
     needs_retesting: false
-    status_history: []
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "CRUD operations for suppliers (fournisseurs) are working correctly."
+
+  - task: "Audit Trail (Historique)"
+    implemented: true
+    working: false
+    file: "server.py"
+    stuck_count: 1
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "API returns 500 Internal Server Error. Issue with MongoDB ObjectId serialization in the response."
 
 frontend:
   - task: "Advanced Analytics Dashboard"
@@ -249,7 +282,7 @@ frontend:
 metadata:
   created_by: "main_agent"
   version: "1.0"
-  test_sequence: 0
+  test_sequence: 1
   run_ui: false
 
 test_plan:
@@ -257,10 +290,16 @@ test_plan:
     - "Analytics Dashboard Backend"
     - "Export Multi-format APIs"
     - "Auto-validation System"
-  stuck_tasks: []
+  stuck_tasks:
+    - "Analytics Dashboard Backend"
+    - "Real-time Notifications"
+    - "AI Stock Predictions"
+    - "Audit Trail (Historique)"
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
   - agent: "main"
     message: "Starting comprehensive stock-manager enhancement with advanced features. Focus on analytics, exports, and auto-validation first."
+  - agent: "testing"
+    message: "Completed backend testing. Found issues with MongoDB ObjectId serialization in Analytics Dashboard and Historique APIs. WebSocket notifications have CORS or authentication issues. AI Stock Predictions API needs valid material IDs. Export Multi-format, Auto-validation, QR Code Generation, and Suppliers Management are working correctly."
