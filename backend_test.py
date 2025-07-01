@@ -10,10 +10,10 @@ from datetime import datetime, timedelta
 from io import BytesIO
 
 class StockManagementAPITester:
-    def __init__(self, base_url="https://69536b33-4600-4b5f-b199-1ee029333aca.preview.emergentagent.com"):
+    def __init__(self, base_url="http://localhost:8001"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
-        self.ws_url = f"{base_url.replace('https://', 'wss://')}/ws"
+        self.ws_url = f"{base_url.replace('http://', 'ws://')}/ws"
         print(f"Using API URL: {self.api_url}")
         self.token = None
         self.tests_run = 0
